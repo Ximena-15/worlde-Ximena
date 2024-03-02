@@ -2,15 +2,35 @@
 <html>
   <head>
     <title>Wordle PPY</title>
-        <link rel="stylesheet" href="style.css">
-    <script src="scirpt.js" defer></script>0
-    <meta charset="UTF-8/ ">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
   </head>
   <body>
-    <h1>Wordle PPY</h1>
-    <input type="text" id="guess-input">
-    <button id="guess-button">Intentar</button>
-    <div id="grid"></div>
-    <p id="guesses"></p>
+      <div class="juego">
+        <h1>Wordle</h1>
+        <input type="text" id="guess-input" class="input-area">
+        <button id="guess-button" class="input-area">Empezar</button>
+        <div id='grid' class="centrado"></div>
+        <p id="mensaje" class="input-area"></p>
+        <div id="resultado" class="input-area"></div>
+        <button id="reiniciar" class="input-area">Reiniciar </button>
+        <p id="guesses" class="input-area"></p>
+      </div>
+      <div id="container">
+        <div class="instrucciones">
+            <ol>
+              <h2>Instrucciones:</h2>
+                <li>¡Bienvenido a Wordle PPY!</li>
+                <li>El objetivo del juego es adivinar una palabra de 5 letras.</li>
+                <li>Ingresa tu intento en el campo de texto y presiona el botón "Intentar".</li>
+                <li>Las letras en verde indican que son correctas y están en la posición correcta.</li>
+                <li>Las letras en amarillo indican que son correctas pero están en una posición incorrecta.</li>
+                <li>Las letras en gris indican que no están en la palabra a adivinar.</li>
+                <li>Tienes 6 intentos para adivinar la palabra. ¡Buena suerte!</li>
+            </ol>
+        </div>
+    </div>
+    
+    <script src="scirpt.js" defer></script>
   </body>
 </html>

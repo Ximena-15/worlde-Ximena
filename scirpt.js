@@ -1,96 +1,159 @@
-let vidas= 6;
-let diccionario = ['APPLE', 'HURLS', 'WINGS', 'YOUTH'];
-const palabra = diccionario[Math.floor(Math.random() * diccionario.length)];
+let intentos = 6;
+let palabra = "";
 
-console.log ("RANDOM",[Math.floor(Math.random() * diccionario.length)])
-console.log("adivina", palabra)
+const UrlApi = 'https://random-word-api.vercel.app/api?words=25&length=5';
 
-document.getElementById("guess-button").addEventListener("click", ()=>{
-    const intento= leerIntento(); //\el algoritmo 
-    if (palabra === intento){
-        terminar("ganaste");
-        //todo: mostrar mensaje
-        //TODO: volver a empezar (reset tiene vidas, cambiar palabra)
-        return;
+document.addEventListener('DOMContentLoaded', () => {
+    cargarPalabra();
+    const button = document.getElementById('guess-button');
+    const reiniciarButton = document.getElementById('reiniciar');
+    const guessInput = document.getElementById('guess-input');
+
+    button.addEventListener('click', intentar);
+    reiniciarButton.addEventListener('click', reiniciarJuego);
+    reiniciarButton.disabled = false;
+    function intentar(){
+      const GRID = document.getElementById('grid');
+      const ROW = document.createElement('div');
+      ROW.className = 'row';
+      const INTENTO = leerIntento ();
+      console.log("Intento:", INTENTO);
+      
+      if (INTENTO.length != 5) {
+          alert("Debe ingresar una palabra de 5 letras");
+          return;
+      }
+      
+      if (INTENTO === palabra){
+          console.log("Ganaste");
+          terminar("Ganaste CRACK, sos un genio");
+          button.disabled = true;
+          reiniciarButton.disabled = false; 
+      }
+  
+      for (let i in palabra) {
+          const SPAN = document.createElement('span');
+          SPAN.className = "letter";
+          if (palabra[i] === INTENTO[i]){
+              console.log(INTENTO[i], "verde");
+              SPAN.innerHTML = INTENTO[i];
+              SPAN.style.background = "green";
+          } else if (palabra.includes(INTENTO[i])) {
+              console.log(INTENTO[i], "amarillo");
+              SPAN.innerHTML = INTENTO[i];
+              SPAN.style.background = "yellow";
+              for (let j = 0; j < i; j++) {
+                  if (palabra[j] === INTENTO[i]) {
+                      SPAN.style.background = "gray";
+                      break;
+                  }
+              }
+          } else {
+              console.log(INTENTO[i], "gris");
+              SPAN.innerHTML = INTENTO[i];
+              SPAN.style.background = "gray";
+          }
+      
+          ROW.appendChild(SPAN);
+      }
+      GRID.appendChild(ROW);
+      intentos--;
+      if (intentos === 0){
+          console.log("Perdiste");
+          terminar("Perdiste crack, Pero no importa, intentalo de nuevo");
+          button.disabled = true;
+          reiniciarButton.disabled = false; 
+      }
+  }
+    function intentar() {
+      const GRID = document.getElementById('grid');
+      const ROW = document.createElement('div');
+      ROW.className = 'row';
+      const INTENTO = leerIntento().toUpperCase(); 
+      console.log("Intento:", INTENTO);
+  
+      if (INTENTO.length != 5) {
+          alert("Debe ingresar una palabra de 5 letras");
+          return;
+      }
+  
+      if (INTENTO === palabra) {
+          console.log("Ganaste");
+          terminar("GANASTE,");
+          button.disabled = true;
+          reiniciarButton.disabled = false;
+      }
+  
+      let letrasCorrectas = new Set();
+      let letrasIncorrectas = new Set();
+  
+      for (let i in palabra) {
+          const letraIntento = INTENTO[i];
+          const letraPalabra = palabra[i];
+          const SPAN = document.createElement('span');
+          SPAN.className = "letter";
+  
+          if (letraIntento === letraPalabra && !letrasCorrectas.has(letraIntento)) {
+              console.log(letraIntento, "verde");
+              SPAN.innerHTML = letraIntento;
+              SPAN.style.background = "green";
+              letrasCorrectas.add(letraIntento); 
+          } else if (palabra.includes(letraIntento) && !letrasCorrectas.has(letraIntento) && !letrasIncorrectas.has(letraIntento)) {
+              console.log(letraIntento, "amarillo");
+              SPAN.innerHTML = letraIntento;
+              SPAN.style.background = "yellow";
+              letrasIncorrectas.add(letraIntento); 
+          } else {
+              console.log(letraIntento, "gris");
+              SPAN.innerHTML = letraIntento;
+              SPAN.style.background = "gray";
+          }
+          ROW.appendChild(SPAN);
+      }
+      GRID.appendChild(ROW);
+      intentos--;
+      if (intentos === 0) {
+          console.log("Perdiste");
+          terminar("PERDISTA");
+          button.disabled = true;
+          reiniciarButton.disabled = false;
+      }
+  }
+    
+    function leerIntento() {
+        let valor = guessInput.value;
+        valor = valor.toUpperCase();
+        return valor;
     }
-    //crear fila
-    const row = document.createElement("div");
-    row.className = "row";
-    const grid = document.getElementById("grid");
-    for (const i in intento){
-        const spam = document.createElement("spam");
-        spam.className ="letter";
-        spam.innerText = (intento[i]);
-        if (intento[i] === palabra[i]){
-            spam.style.background = "green"
-        }else if (palabra.includes(intento[i])){
-        console.log (intento[i], "amarillo");
-        spam.style.background = "yellow"
-    }else{
-        console.log (intento[i], "gris");
-        spam.style.background = "grey"
-        }
-        row.appendChild(spam);
+
+    function terminar(mensaje) {
+        const INPUT = document.getElementById("guess-input");
+        INPUT.disabled = false;
+        button.disabled = true;
+        let contenedor = document.getElementById('guesses');
+        contenedor.innerHTML = "<h1>" + mensaje + "<h1>";
     }
-    grid.appendChild(row)
-    vidas--;
-    if (!vidas){
-        //todo: mostrar mensaje
-        //TODO: volver a empezar (reset tiene vidas, cambiar palabra)
-        //todo: desabilitar el boton 
-        terminar("perdiste")
+
+    function reiniciarJuego() {
+        console.log("Reiniciando");
+        intentos = 6;
+        const GRID = document.getElementById('grid');
+        GRID.innerHTML = "";  
+        guessInput.value = "";  
+        cargarPalabra();
+        button.disabled = false;
+    }
+
+    function cargarPalabra() {
+        fetch(UrlApi)
+            .then(response => response.json())
+            .then(response => {
+                palabra = response[0].toUpperCase();
+                console.log("Palabra nueva:", palabra);
+            })
+            .catch(err => { console.log("Error al obtener la palabra:", err) });
     }
 });
 
-function leerIntento(){
-    const input = document.getElementById("guess-input");
-    const valor = input.value.toUpperCase();
-    return valor;   //mecanismo PARA LEER EL ALGORITMO`
-}
 
-function terminar(mensaje){
-    let p= document.getElementById("guesses");
-    p.innerHTML= "<h1>"+ mensaje +"<h1>";
-}
 
-/*let miVector = "hola mundo";
-
-for (const i in miVector){
-    console.log(i, miVector[i]);
-}
-let P= "APPLE";
-let I= "ANGEL";
-let vidas= 6;
-
-for (i in I){
-
-}*/
-
-/*let i= 0
-while(i<5){
-    console.log("algo repetido en whil,", i)
-    i++;
-
-}**/ //while
-
-//let miCadena = "hola";
-
-/*for (const i in miCadena){
-console.log(i,miCadena[i])
-}*/ // for in
-
-//for (const letra of miCadena) {
- /*   console.log(letra)
-}
-/*let miVector= ["a", "b", "c"] //2
-for (let i= 0; i<3; i++){
-    if (typeof miVector[i] === "string")
-    console.log (i,  typeof miVector[i]);
-} // for
-miVector.forEach((element)=>{
-console.log(i, element)
-});/* //forEache
-/*let b = "hola";
-let miVector = [1, 2, 3, b]
-miVector.push ('chau', 1);
-console.log(miVector);*/ //vectores
